@@ -18,7 +18,7 @@ jobs:
         run: msbuild src/FanControl.LianLiPlugin.sln /p:Configuration=Release /p:Platform="Any CPU"
 
       - name: Build ARGB
-        run: msbuild src/FanControl.LianLiPlugin.sln /p:Configuration=Release /p:Platform="Any CPU" /p:DefineConstants="TRACE;ARGB" /p:AssemblyName=FanControl.LianLiPlugin.ARGB
+        run: msbuild src/FanControl.LianLiPlugin.sln /p:Configuration=Release /p:Platform="Any CPU" /p:DefineConstants="TRACE%3BARGB" /p:AssemblyName=FanControl.LianLiPlugin.ARGB
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v7
