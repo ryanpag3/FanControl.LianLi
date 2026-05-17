@@ -13,10 +13,40 @@ permissions:
 
 jobs:
   update_release_draft:
+    if: github.event_name == 'pull_request_target'
     runs-on: ubuntu-latest
     steps:
       - uses: release-drafter/release-drafter@v6
-        with:
-          publish: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish_release:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v3
+
+      - name: Build
+        run: msbuild src/FanControl.LianLiPlugin.sln /p:Configuration=Release /p:Platform="Any CPU"
+
+      - name: Build ARGB
+        run: msbuild src/FanControl.LianLiPlugin.sln /p:Configuration=Release /p:Platform="Any CPU" /p:DefineConstants="TRACE%3BARGB" /p:AssemblyName=FanControl.LianLiPlugin.ARGB
+
+      - name: Zip DLLs
+        run: Compress-Archive -Path src/bin/Release/FanControl.LianLiPlugin.dll, src/bin/Release/FanControl.LianLiPlugin.ARGB.dll -DestinationPath FanControl.LianLiPlugin.zip
+
+      - name: Publish release
+        id: release_drafter
+        uses: release-drafter/release-drafter@v6
+        with:
+          publish: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload release asset
+        run: gh release upload "${{ steps.release_drafter.outputs.tag_name }}" FanControl.LianLiPlugin.zip --clobber
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
