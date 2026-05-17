@@ -10,7 +10,11 @@ namespace FanControl.LianLiPlugin
         private Boolean m_DisposedValue;
         private LianLi.Devices _devices;
         private bool _initialized;
+#if ARGB
+        private bool enableARGB = true;
+#else
         private bool enableARGB = false;
+#endif
 
         public void Close()
         {
