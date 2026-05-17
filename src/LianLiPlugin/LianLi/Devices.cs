@@ -170,8 +170,7 @@ namespace LianLi
 
         private void DisableRPMSync(int fancontroller_channel)
         {
-            byte channelByte = (byte)((2 * fancontroller_channel) * 16);
-            if(fancontroller_channel == 0) { channelByte = (byte)(16); }
+            byte channelByte = (byte)(16 << fancontroller_channel);
 
             switch (_type)
             {
