@@ -1,0 +1,29 @@
+name: Build
+
+on:
+  push:
+    branches: ["**"]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v3
+
+      - name: Build
+        run: msbuild src/FanControl.LianLiPlugin.sln /p:Configuration=Release /p:Platform="Any CPU"
+
+      - name: Build ARGB
+        run: msbuild src/FanControl.LianLiPlugin.sln /p:Configuration=Release /p:Platform="Any CPU" /p:DefineConstants="TRACE%3BARGB" /p:AssemblyName=FanControl.LianLiPlugin.ARGB
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: FanControl.LianLiPlugin
+          path: |
+            src/bin/Release/FanControl.LianLiPlugin.dll
+            src/bin/Release/FanControl.LianLiPlugin.ARGB.dll

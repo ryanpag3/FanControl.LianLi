@@ -68,8 +68,14 @@ namespace LianLi
         {
             byte[] buffer = new byte[bufferLength];
             buffer[0] = reportId;
-            _stream.GetInputReport(buffer);
-
+            try
+            {
+                _stream.GetInputReport(buffer);
+            }
+            catch
+            {
+                // Return zero-filled buffer on transient read failure
+            }
             return buffer;
         }
 
