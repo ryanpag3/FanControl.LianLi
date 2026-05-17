@@ -30,13 +30,18 @@ jobs:
         uses: microsoft/setup-msbuild@v3
 
       - name: Build
-        run: msbuild src/FanControl.LianLiPlugin.sln /p:Configuration=Release /p:Platform="Any CPU"
+        run: |
+          msbuild src/FanControl.LianLiPlugin.sln /p:Configuration=Release /p:Platform="Any CPU"
+          New-Item -ItemType Directory -Force -Path artifacts | Out-Null
+          Copy-Item "src\bin\Release\FanControl.LianLiPlugin.dll" "artifacts\"
 
       - name: Build ARGB
-        run: msbuild src/FanControl.LianLiPlugin.sln /p:Configuration=Release /p:Platform="Any CPU" /p:DefineConstants="TRACE%3BARGB" /p:AssemblyName=FanControl.LianLiPlugin.ARGB
+        run: |
+          msbuild src/FanControl.LianLiPlugin.sln /p:Configuration=Release /p:Platform="Any CPU" /p:DefineConstants="TRACE%3BARGB" /p:AssemblyName=FanControl.LianLiPlugin.ARGB
+          Copy-Item "src\bin\Release\FanControl.LianLiPlugin.ARGB.dll" "artifacts\"
 
       - name: Zip DLLs
-        run: Compress-Archive -Path src/bin/Release/FanControl.LianLiPlugin.dll, src/bin/Release/FanControl.LianLiPlugin.ARGB.dll -DestinationPath FanControl.LianLiPlugin.zip
+        run: Compress-Archive -Path "artifacts\FanControl.LianLiPlugin.dll", "artifacts\FanControl.LianLiPlugin.ARGB.dll" -DestinationPath FanControl.LianLiPlugin.zip
 
       - name: Publish release
         id: release_drafter
