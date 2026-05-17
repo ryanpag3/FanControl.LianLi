@@ -17,6 +17,8 @@ categories:
       - dependencies
 change-template: "- $TITLE @$AUTHOR (#$NUMBER)"
 change-title-escapes: '\<*_&'
+version-template: "$MAJOR.$MINOR.$PATCH"
+initial-version: "1.0.1"
 version-resolver:
   major:
     labels:
